@@ -447,20 +447,8 @@ public:
     }
 
     void clear() {
-        //in Bucket realSize = 0, otherBuckets delete, Index = 0; otherIndex delete-> modified destructor
-        deleteRow(bucketArray[0]->nextBucket);
-        bucketArray[0]->nextEmpty = 0;
-        bucketArray[0]->nextBucket = NULL;
-        for (size_t i = 1; i < nextEmpty; i++) {
-            deleteRow(bucketArray[i]);
-        }
-        //modified deletebucket: first index: delete all bucket but the first!
-        countElements = 0;
-        nextEmpty = 1;
-        // empty table with one bucket
-        round = 0;
-        lastIndexInRound = 0;
-        nextToSplit = 0;
+        ADS_set tmp;
+        swap(tmp);
 
 
     } //PH2
