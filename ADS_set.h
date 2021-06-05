@@ -47,10 +47,15 @@ private:
             size_t i{0};
             for (; i < nextEmpty; i++) {
                 if (key_equal{}(bucketValues[i], key)) {
-                    break;
+                    //break;
+                    for (; i < nextEmpty - 1; ++i)
+                        bucketValues[i] = bucketValues[i + 1];
+                    --nextEmpty;
+                    return true; //torolve
                 }
             }
-            if (i != nextEmpty) {
+            return false;
+            /*if (i != nextEmpty) {
                 //its in there ->deletable
                 for (; i < nextEmpty - 1; ++i)
                     bucketValues[i] = bucketValues[i + 1];
@@ -58,7 +63,7 @@ private:
                 return true; //torolve
             }
             return false; //nem talalta meg-->nem torolte ki
-
+*/
         }
 
         void insertElementToBucket(const key_type &data) {
@@ -105,35 +110,41 @@ public:
     }
 
     ADS_set(std::initializer_list<key_type> ilist) : ADS_set() {
-        for (const auto &g : ilist) {
+        /*for (const auto &g : ilist) {
             insert(g);
-        }
+        }*/
+        insert(ilist);
     }
 
     ADS_set(const ADS_set &other) : ADS_set() {
+        insert(other.begin(),other.end());
+        /*
         for (auto i = other.begin(); i != other.end(); i++) {
             insert(*i);
-        }
+        }*/
     } //PH2
     template<typename InputIt>
     ADS_set(InputIt first, InputIt last): ADS_set() {
-        for (; first != last; first++) {
+        /*for (; first != last; first++) {
             this->insert(*first);
-        }
+        }*/
+        insert(first,last);
     }
 
     ADS_set &operator=(const ADS_set &other) {
         this->clear();
-        for (auto i = other.begin(); i != other.end(); i++) {
+        /*for (auto i = other.begin(); i != other.end(); i++) {
             insert(*i);
-        }
+        }*/
+        insert(other.begin(),other.end());
         return *this;
     } //PH2
     ADS_set &operator=(std::initializer_list<key_type> ilist) {
         this->clear();
-        for (const auto &g : ilist) {
+        /*for (const auto &g : ilist) {
             insert(g);
-        }
+        }*/
+        insert(ilist);
         return *this;
 
     } //PH2
@@ -188,10 +199,6 @@ public:
     }
 
     std::pair<const_iterator, bool> insert(const key_type &key) {
-        /* size_type  row = hashAlgorithmOne(hasher{}(key));      //Megtalalja a sort ahova insertel
-         if (row < nextToSplit) {
-             row = hashAlgorithmTwo(hasher{}(key));
-         }*/
         std::pair<const_iterator, size_type> r = findHelp(key);
         //const_iterator r = find(key);
         //if bool == true found a not full bucket (ptr)
@@ -363,10 +370,10 @@ public:
         }
         deleteRow(b->nextBucket);
         delete[] b->bucketValues;
-        b->nextBucket = nullptr;
-        b->nextEmpty = 0;
+       // b->nextBucket = nullptr;
+        //b->nextEmpty = 0;
         delete b;
-        b = NULL;
+       // b = NULL;
 
     }
 
