@@ -132,11 +132,14 @@ public:
     }
 
     ADS_set &operator=(const ADS_set &other) {
-        this->clear();
+        /*this->clear();
         /*for (auto i = other.begin(); i != other.end(); i++) {
             insert(*i);
-        }*/
-        insert(other.begin(),other.end());
+        }
+        insert(other.begin(),other.end());*/
+        if(this == &other){return *this;}
+        ADS_set tmp{other};
+        swap(tmp);
         return *this;
     } //PH2
     ADS_set &operator=(std::initializer_list<key_type> ilist) {
@@ -144,7 +147,8 @@ public:
         /*for (const auto &g : ilist) {
             insert(g);
         }*/
-        insert(ilist);
+        ADS_set tmp{ilist};
+        swap(tmp);
         return *this;
 
     } //PH2
@@ -238,9 +242,7 @@ public:
         //benne van mar, bool = false, iterator mutat arra
     } //PH2
     void insert(std::initializer_list<key_type> ilist) {
-        for (const auto &i: ilist) {
-            insert(i);
-        }
+       insert(std::begin(ilist), std::end(ilist));
     }
 
     template<typename InputIt>
@@ -448,9 +450,7 @@ public:
     }
 
     bool empty() const {
-        if (size() == 0)
-            return true;
-        return false;
+        return !countElements;
     }
 
     void clear() {
