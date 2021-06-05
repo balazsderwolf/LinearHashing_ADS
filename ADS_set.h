@@ -47,15 +47,10 @@ private:
             size_t i{0};
             for (; i < nextEmpty; i++) {
                 if (key_equal{}(bucketValues[i], key)) {
-                    //break;
-                    for (; i < nextEmpty - 1; ++i)
-                        bucketValues[i] = bucketValues[i + 1];
-                    --nextEmpty;
-                    return true; //torolve
+                    break;
                 }
             }
-            return false;
-            /*if (i != nextEmpty) {
+            if (i != nextEmpty) {
                 //its in there ->deletable
                 for (; i < nextEmpty - 1; ++i)
                     bucketValues[i] = bucketValues[i + 1];
@@ -63,7 +58,7 @@ private:
                 return true; //torolve
             }
             return false; //nem talalta meg-->nem torolte ki
-*/
+
         }
 
         void insertElementToBucket(const key_type &data) {
@@ -89,7 +84,7 @@ private:
     size_type nextEmpty;
     Bucket **bucketArray;
 
-    size_type countElements;  //helper variable, count the size of the hashtable is easier
+    int countElements;  //helper variable, count the size of the hashtable is easier
     size_type nextToSplit;    // pointer to the next Split
     size_type lastIndexInRound; // last index before increase round
     size_type round;          //round used for hashfunction 1,2
@@ -110,45 +105,35 @@ public:
     }
 
     ADS_set(std::initializer_list<key_type> ilist) : ADS_set() {
-        /*for (const auto &g : ilist) {
+        for (const auto &g : ilist) {
             insert(g);
-        }*/
-        insert(ilist);
+        }
     }
 
     ADS_set(const ADS_set &other) : ADS_set() {
-        insert(other.begin(),other.end());
-        /*
         for (auto i = other.begin(); i != other.end(); i++) {
             insert(*i);
-        }*/
+        }
     } //PH2
     template<typename InputIt>
     ADS_set(InputIt first, InputIt last): ADS_set() {
-        /*for (; first != last; first++) {
+        for (; first != last; first++) {
             this->insert(*first);
-        }*/
-        insert(first,last);
+        }
     }
 
     ADS_set &operator=(const ADS_set &other) {
-        /*this->clear();
-        /*for (auto i = other.begin(); i != other.end(); i++) {
+        this->clear();
+        for (auto i = other.begin(); i != other.end(); i++) {
             insert(*i);
         }
-        insert(other.begin(),other.end());*/
-        if(this == &other){return *this;}
-        ADS_set tmp{other};
-        swap(tmp);
         return *this;
     } //PH2
     ADS_set &operator=(std::initializer_list<key_type> ilist) {
         this->clear();
-        /*for (const auto &g : ilist) {
+        for (const auto &g : ilist) {
             insert(g);
-        }*/
-        ADS_set tmp{ilist};
-        swap(tmp);
+        }
         return *this;
 
     } //PH2
@@ -219,9 +204,12 @@ public:
                 // Create new row with 1 Empty Bucket
                 createNewRowToSplit();
                 //replace elements
-                replaceElements(nextToSplit);
+                bool trigger = replaceElements(nextToSplit);
                 //Before next element- search for empty overflowbuckets
-                deleteOverflowBucket(nextToSplit); // maximum 1 empty bucket, every other will be deleted
+                if(trigger){
+                    deleteOverflowBucket(nextToSplit); // maximum 1 empty bucket, every other will be deleted
+                }
+
                 //get an Iterator
 
                 increaseRound();
@@ -242,7 +230,9 @@ public:
         //benne van mar, bool = false, iterator mutat arra
     } //PH2
     void insert(std::initializer_list<key_type> ilist) {
-       insert(std::begin(ilist), std::end(ilist));
+        for (const auto &i: ilist) {
+            insert(i);
+        }
     }
 
     template<typename InputIt>
@@ -372,10 +362,10 @@ public:
         }
         deleteRow(b->nextBucket);
         delete[] b->bucketValues;
-       // b->nextBucket = nullptr;
+        // b->nextBucket = nullptr;
         //b->nextEmpty = 0;
         delete b;
-       // b = NULL;
+        // b = NULL;
 
     }
 
@@ -392,7 +382,6 @@ public:
                 return 1;
             }
         }
-        deleteOverflowBucket(row);
         return 0;
     }//PH2
 
@@ -404,7 +393,8 @@ public:
         nextEmpty++;
     }
 
-    void replaceElements(const size_type &index) {
+    bool replaceElements(const size_type &index) {
+        bool trigger = false;
         //dupla for ciklus (sor(.at elem(vector)))
         //minden elemre -> hashfunctionTwo-> marad/megy
         for (Bucket *i = *(bucketArray + index); i != nullptr; i = i->nextBucket) {
@@ -423,6 +413,7 @@ public:
                         firstNotFull.first->insertElementToBucket(i->bucketValues[key]);
                     }
                     i->eraseFromBucket(i->bucketValues[key]);
+                    trigger = true;
                     if (i->nextEmpty == 0) {
                         break;
                     } else {
@@ -432,6 +423,7 @@ public:
 
             }
         }
+        return trigger;
     }
 
     void increaseRound() {
@@ -450,7 +442,9 @@ public:
     }
 
     bool empty() const {
-        return !countElements;
+        if (size() == 0)
+            return true;
+        return false;
     }
 
     void clear() {
