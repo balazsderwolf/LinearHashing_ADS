@@ -1,7 +1,7 @@
 # LinearHashing_ADS
-ADS course Uni Vienna-semester_project
-Dynamic Linear Hashing without using STL, STD methods, datasctructures<br>
-Creating the datastructure: include "ADS_set.h" in main<br>
+ADS course Uni Vienna-semester_project<br>
+Dynamic Linear Hashing without using STL, STD methods, data structures <br>
+To creating the data structure: include "ADS_set.h" <br>
 ```cpp
 ADS_set<int,4> table;
 //type,default blocksize
