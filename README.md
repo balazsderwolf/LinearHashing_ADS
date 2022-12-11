@@ -1,12 +1,12 @@
 # LinearHashing_ADS
 ADS course Uni Vienna-semester_project<br>
-Dynamic Linear Hashing without using STL, STD methods, data structures works with every datatype <br>
-With user defined Objects(need to implement your own hashcode)<br/>
+Dynamic Linear Hashing without using STL, STD methods, data structures <br>
+Works with user defined Objects (you need to implement your own hashcode)<br/>
 <img width="796" alt="Képernyőfotó 2021-06-10 - 20 12 41" src="https://user-images.githubusercontent.com/72218495/121575998-43cdde80-ca28-11eb-85c0-960ce878c1ad.png">
 <br/>With integer
 <br/><img width="816" alt="Képernyőfotó 2021-06-10 - 20 14 44" src="https://user-images.githubusercontent.com/72218495/121576298-84c5f300-ca28-11eb-9064-2daaaa3f8c44.png">
 
-To creating the data structure: include "ADS_set.h" <br>
+To create the data structure: include "ADS_set.h" <br>
 ```cpp
 ADS_set<int,4> table;
 //type,default blocksize
